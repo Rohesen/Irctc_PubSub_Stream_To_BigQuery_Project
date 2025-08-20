@@ -1,6 +1,6 @@
 # 🚄 IRCTC Streaming Data Pipeline — GCP (Pub/Sub → Dataflow → BigQuery)
 
-This project demonstrates a **real-time data ingestion pipeline** that ingests mock IRCTC (train booking) data into **BigQuery** using **Google Cloud Pub/Sub**, **Apache Beam (Dataflow)**, and **Python UDFs for transformation**.  
+This project demonstrates a **real-time data ingestion pipeline** that ingests mock IRCTC (train booking) data into **BigQuery** using **Google Cloud Pub/Sub**, **Dataflow**, and **Python UDFs for transformation**.  
 
 ---
 
