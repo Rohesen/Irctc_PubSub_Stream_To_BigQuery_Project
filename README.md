@@ -6,6 +6,8 @@ This project demonstrates a **real-time data ingestion pipeline** that ingests m
 
 ## 📌 Architecture
 
+![arch](architecture_irctc_pub_sub.jpg)
+
 1. **Mock Data Generator**  
    - Generates random passenger/booking-like data.  
    - Publishes JSON messages into a Pub/Sub topic.
@@ -35,10 +37,9 @@ This project demonstrates a **real-time data ingestion pipeline** that ingests m
 ## 📂 Repository Structure
 ```
 
-├── bigquery\_create\_table.sql   # BigQuery schema definition
-├── transform\_udf.py            # Python UDF for cleaning & enrichment
-├── irctc\_mock\_data\_to\_pubsub.py# Mock data generator & publisher
-├── pipeline.py                 # (optional) Beam Dataflow pipeline
+├── create_bigquery_table.sql   # BigQuery schema definition
+├── transform_udf.py            # Python UDF for cleaning & enrichment
+├── irctc_mock_data_to_pubsub.py# Mock data generator & publisher
 └── README.md                   # Project documentation
 
 ````
@@ -91,6 +92,8 @@ python pipeline.py \
   --staging_location gs://$BUCKET/staging \
   --temp_location gs://$BUCKET/temp
 ```
+
+![dataflow_graph](dataflow_jobgraph.png)
 
 ---
 
