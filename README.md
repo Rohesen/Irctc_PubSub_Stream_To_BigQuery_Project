@@ -1,6 +1,6 @@
 # 🚄 IRCTC Streaming Data Pipeline — GCP (Pub/Sub → Dataflow → BigQuery)
 
-This project demonstrates a **real-time data ingestion pipeline** that ingests mock IRCTC (train booking) data into **BigQuery** using **Google Cloud Pub/Sub**, **Dataflow**, and **Python UDFs for transformation**.  
+This project demonstrates a **real-time data ingestion pipeline** that ingests mock IRCTC data into **BigQuery** using **Google Cloud Pub/Sub**, **Google Cloud Dataflow (with Python UDF transformation)**, and **BigQuery**.
 
 ---
 
@@ -9,28 +9,31 @@ This project demonstrates a **real-time data ingestion pipeline** that ingests m
 ![arch](architecture_irctc_pub_sub.jpg)
 
 1. **Mock Data Generator**  
-   - Generates random passenger/booking-like data.  
+   - Generates synthetic IRCTC passenger/booking records.  
    - Publishes JSON messages into a Pub/Sub topic.
 
 2. **Pub/Sub Topic**  
-   - Acts as the ingestion layer for streaming data.
+   - Serves as the streaming ingestion entry point.
 
-3. **Dataflow Pipeline (Apache Beam)**  
-   - Reads messages from Pub/Sub.  
-   - Applies a **Python UDF** (`transform_data`) for cleaning, validation, and enrichment.  
-   - Writes transformed data to BigQuery in near real time.
+3. **Dataflow Template with Python UDF**  
+   - Reads data directly from Pub/Sub.  
+   - Applies a **Python UDF (`transform_data`)** for:
+     - Cleaning & validation  
+     - Normalization of timestamps & booleans  
+     - Enrichment (loyalty status, account age)  
+   - Writes curated rows into BigQuery.
 
 4. **BigQuery**  
-   - Stores the curated dataset for analysis and reporting.  
+   - Stores transformed data for analytics, dashboards, and querying. 
 
 ---
 
 ## 🛠️ Tech Stack
-- **Google Cloud Pub/Sub** – Streaming ingestion  
-- **Google Cloud Dataflow** – Managed Apache Beam pipeline  
+- **Google Cloud Pub/Sub** – Event ingestion  
+- **Google Cloud Dataflow** – Managed data processing (streaming job)  
 - **BigQuery** – Data warehouse  
-- **Cloud Storage** – Temp/staging for Dataflow  
-- **Python 3.10+** – For UDFs & mock data publisher  
+- **Cloud Storage** – Temporary storage for Dataflow jobs  
+- **Python 3.10+** – For UDF + mock data publisher   
 
 ---
 
@@ -50,7 +53,7 @@ This project demonstrates a **real-time data ingestion pipeline** that ingests m
 
 ### 1. Create GCP Resources
 ```bash
-# Set variables
+# Variables
 PROJECT=your-gcp-project
 REGION=your-region
 BUCKET=your-bucket
@@ -62,16 +65,16 @@ gcloud pubsub topics create irctc-data
 
 # BigQuery dataset & table
 bq mk --dataset $PROJECT:irctc_dwh
-bq mk --table $PROJECT:irctc_dwh.irctc_stream_tb ./bigquery_create_table.sql
+bq query --use_legacy_sql=false < bigquery_create_table.sql
 
 # Cloud Storage bucket
 gsutil mb -l $REGION gs://$BUCKET
-````
+```
 
 ### 2. Install Python Dependencies
 
 ```bash
-pip install apache-beam[gcp] google-cloud-pubsub
+pip install google-cloud-pubsub
 ```
 
 ### 3. Publish Mock Data
@@ -138,4 +141,4 @@ ORDER BY avg_delay DESC;
 
 ## 🧑‍💻 Author
 
-Developed as a hands-on project to demonstrate **streaming ETL pipelines on GCP** using Python.
+Developed as a hands-on project to demonstrate streaming ETL on GCP with Pub/Sub, Dataflow (Python UDF), and BigQuery.
